@@ -1,0 +1,2137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Property Manager Pro</title>
+<link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiUHJvcGVydHkgTWFuYWdlciBQcm8iLCJzaG9ydF9uYW1lIjoiUHJvcE1nciIsInN0YXJ0X3VybCI6Ii4iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsImJhY2tncm91bmRfY29sb3IiOiIjRjRGNkZCIiwidGhlbWVfY29sb3IiOiIjMUExQTJFIiwiaWNvbnMiOlt7InNyYyI6ImRhdGE6aW1hZ2Uvc3ZnK3htbDtiYXNlNjQsUEhOMlp5QjRiV3h1Y3owaWFIUjBjRG92TDNkM2R5NTNNeTV2Y21jdk1qQXdNQzl6ZG1jaUlIZHBaSFJvUFNJeE1qZ2lJR2hsYVdkb2REMGlNVEk0SWo0OGNtVmpkQ0IzYVdSMGFEMGlNVEk0SWlCb1pXbG5hSFE5SWpFeU9DSWdabWxzYkQwaUl6RkJNVUV5UlNJdlBqeDBaWGgwSUhnOUlqWTBJaUI1UFNJM01DSWdabWxzYkQwaUkzZG1aaUlnWm05dWRDMW1ZVzFwYkhrOUlrRnlhV0ZzSWlCbWIyNTBMWE5wZW1VOUlqUTRJaUIwWlhoMExXRnVZMmh2Y2owaWJXbGtaR3hsSWo0OEwzUmxlSFErUEM5emRtYysiLCJzaXplcyI6IjEyOHgxMjgiLCJ0eXBlIjoiaW1hZ2Uvc3ZnK3htbCJ9XX0="/>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:#F4F6FB;color:#1A1A2E;overflow-x:hidden}
+:root{--primary:#1A1A2E;--accent:#6366F1;--success:#10B981;--warning:#F59E0B;--danger:#EF4444;--info:#3B82F6}
+
+/* TOPBAR */
+.topbar{background:var(--primary);padding:12px 20px;position:sticky;top:0;z-index:1000;box-shadow:0 2px 12px rgba(0,0,0,.3);display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:18px;font-weight:800;color:#fff;display:flex;align-items:center;gap:8px}
+.top-actions{display:flex;gap:8px}
+.top-btn{background:rgba(255,255,255,.1);color:#fff;border:none;padding:8px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s}
+.top-btn:hover{background:rgba(255,255,255,.2)}
+.install-prompt{background:#10B981;padding:10px 16px;border-radius:8px;color:#fff;font-size:12px;font-weight:600;cursor:pointer;display:none}
+
+/* SIDEBAR */
+.layout{display:flex;height:calc(100vh - 60px)}
+.sidebar{width:220px;background:#fff;border-right:1px solid #E5E7EB;overflow-y:auto;flex-shrink:0}
+.nav-item{display:flex;align-items:center;gap:10px;padding:12px 16px;color:#6B7280;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;border-left:3px solid transparent}
+.nav-item:hover{background:#F9FAFB;color:var(--primary)}
+.nav-item.active{background:#EEF2FF;color:var(--accent);border-left-color:var(--accent)}
+.nav-section{padding:16px 16px 8px;font-size:10px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:.05em}
+
+/* MAIN CONTENT */
+.main{flex:1;overflow-y:auto;padding:20px}
+.page{display:none}
+.page.active{display:block}
+.page-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.page-title{font-size:22px;font-weight:800;color:var(--primary)}
+.page-actions{display:flex;gap:8px;flex-wrap:wrap}
+
+/* CARDS */
+.card{background:#fff;border:1px solid #E5E7EB;border-radius:12px;padding:20px;margin-bottom:16px}
+.card-title{font-size:14px;font-weight:700;color:var(--primary);margin-bottom:12px}
+
+/* KPI GRID */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:20px}
+.kpi-card{background:#fff;border:1px solid #E5E7EB;border-radius:12px;padding:16px;border-top:3px solid #E5E7EB}
+.kpi-label{font-size:10px;color:#9CA3AF;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.kpi-value{font-size:24px;font-weight:800;color:var(--primary);line-height:1}
+.kpi-sub{font-size:11px;color:#9CA3AF;margin-top:4px}
+
+/* BUTTONS */
+.btn{padding:10px 16px;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;font-family:inherit;white-space:nowrap}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:#0F0F1F}
+.btn-success{background:var(--success);color:#fff}
+.btn-success:hover{background:#059669}
+.btn-warning{background:var(--warning);color:#fff}
+.btn-warning:hover{background:#D97706}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-danger:hover{background:#DC2626}
+.btn-info{background:var(--info);color:#fff}
+.btn-info:hover{background:#2563EB}
+.btn-outline{background:transparent;border:1.5px solid var(--primary);color:var(--primary)}
+.btn-outline:hover{background:#F9FAFB}
+.btn-sm{padding:6px 12px;font-size:11px}
+
+/* FILTERS */
+.filters{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+select,input{padding:8px 12px;border:1px solid #D1D5DB;border-radius:8px;font-size:13px;outline:none;font-family:inherit}
+select:focus,input:focus{border-color:var(--accent)}
+.search-box{flex:1;min-width:200px;position:relative}
+.search-box input{width:100%;padding-left:36px}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#9CA3AF}
+
+/* TABLE */
+.table-wrap{background:#fff;border:1px solid #E5E7EB;border-radius:12px;overflow:auto}
+table{width:100%;border-collapse:collapse;min-width:800px}
+thead th{padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:.05em;background:#F9FAFB;border-bottom:1px solid #E5E7EB;white-space:nowrap}
+tbody tr{cursor:pointer;transition:background .1s;border-bottom:1px solid #F3F4F6}
+tbody tr:hover{background:#F9FAFB}
+td{padding:12px 14px;font-size:13px;color:#374151;vertical-align:middle}
+.tag{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600}
+
+/* CALENDAR GRID */
+.cal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.cal-nav{display:flex;gap:8px}
+.cal-grid{overflow-x:auto;background:#fff;border:1px solid #E5E7EB;border-radius:12px;padding:12px}
+.cal-table{width:100%;border-collapse:collapse;min-width:1200px}
+.cal-table th{padding:8px;font-size:11px;font-weight:700;text-align:center;background:#F9FAFB;border:1px solid #E5E7EB;min-width:80px}
+.cal-table td{padding:4px;border:1px solid #E5E7EB;text-align:center;vertical-align:top;min-height:60px;position:relative}
+.cal-room-name{position:sticky;left:0;background:#F9FAFB;font-weight:600;text-align:left;padding:8px;z-index:1}
+.cal-cell{min-height:50px;font-size:10px}
+.cal-cell.vacant{background:#D1FAE5}
+.cal-cell.occupied{background:#FEE2E2;font-weight:600;color:#991B1B}
+.cal-cell.reserved{background:#FEF3C7}
+.cal-cell.blocked{background:#E5E7EB;color:#6B7280}
+.cal-guest-name{font-size:10px;font-weight:600;padding:2px}
+
+/* ROOM CARDS */
+.room-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+.room-card{background:#fff;border:2px solid #E5E7EB;border-radius:12px;padding:16px;cursor:pointer;transition:all .15s;position:relative}
+.room-card:hover{border-color:var(--accent);box-shadow:0 4px 12px rgba(99,102,241,.1)}
+.room-card.vacant{border-left:4px solid var(--success)}
+.room-card.occupied{border-left:4px solid var(--danger)}
+.room-card.reserved{border-left:4px solid var(--warning)}
+.room-card.blocked{border-left:4px solid #6B7280}
+.room-number{font-size:18px;font-weight:800;color:var(--primary)}
+.room-type{font-size:11px;color:#6B7280;margin-top:2px}
+.room-guest{font-size:12px;font-weight:600;color:#374151;margin-top:8px}
+.room-status-badge{position:absolute;top:12px;right:12px;padding:4px 8px;border-radius:6px;font-size:10px;font-weight:700}
+.ota-badge{margin-top:6px;display:inline-flex;align-items:center;gap:4px;font-size:10px;color:#6B7280}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:2000;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
+.modal{background:#fff;border-radius:16px;padding:24px;width:92%;max-width:600px;max-height:90vh;overflow-y:auto}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.modal-title{font-size:18px;font-weight:700;color:var(--primary)}
+.close-btn{background:none;border:none;font-size:24px;cursor:pointer;color:#9CA3AF;line-height:1}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-field{margin-bottom:14px}
+.form-field.full{grid-column:1/-1}
+.form-label{display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:4px}
+.form-input,.form-select,.form-textarea{width:100%;padding:10px 12px;border:1px solid #D1D5DB;border-radius:8px;font-size:13px;font-family:inherit}
+.form-textarea{resize:vertical;min-height:60px}
+
+/* MOBILE */
+@media(max-width:768px){
+  .sidebar{position:fixed;left:-220px;top:60px;height:calc(100vh - 60px);z-index:999;transition:left .3s;box-shadow:4px 0 12px rgba(0,0,0,.1)}
+  .sidebar.open{left:0}
+  .main{width:100%}
+  .kpi-grid{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
+  .room-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
+  .page-header{flex-direction:column;align-items:flex-start;gap:12px}
+}
+
+/* PRINT */
+@media print{
+  .topbar,.sidebar,.page-actions,.filters,.btn{display:none!important}
+  .main{padding:0}
+}
+
+/* TASK */
+.task-item{padding:12px;background:#F9FAFB;border-left:3px solid #D1D5DB;border-radius:6px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+.task-item.done{opacity:.5;text-decoration:line-through}
+.task-item.priority-high{border-left-color:var(--danger)}
+.task-item.priority-medium{border-left-color:var(--warning)}
+.task-item.priority-low{border-left-color:var(--info)}
+
+/* INVENTORY */
+.inv-item{display:flex;justify-content:space-between;padding:10px;border-bottom:1px solid #F3F4F6}
+.inv-item:last-child{border-bottom:none}
+.stock-badge{padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700}
+.stock-low{background:#FEE2E2;color:#991B1B}
+.stock-ok{background:#D1FAE5;color:#065F46}
+
+/* LOADING */
+.loading{text-align:center;padding:40px;color:#9CA3AF}
+.empty-state{text-align:center;padding:60px 20px;color:#9CA3AF}
+.empty-state svg{width:64px;height:64px;margin-bottom:16px;opacity:.3}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;padding:8px 20px;text-align:center;font-size:12px;font-weight:600;position:sticky;top:0;z-index:1001">
+  🌐 Live Website Version • Your data saves on this device • Clear sample data in Settings
+</div>
+
+<div class="topbar">
+  <div class="logo" id="dashboard-name">🏠 Property Manager Pro</div>
+  <div style="background:#10B981;color:#fff;padding:6px 14px;border-radius:8px;font-size:11px;font-weight:600">✅ LIVE</div>
+  <div class="top-actions">
+    <button class="top-btn" onclick="exportAllData()">📥 Export All</button>
+    <button class="top-btn" onclick="backupToGoogleDrive()">☁️ Backup</button>
+    <button class="top-btn" onclick="toggleSidebar()">☰</button>
+  </div>
+  <div class="install-prompt" id="install-prompt" onclick="installApp()">📲 Install App</div>
+</div>
+
+<div class="layout">
+  <!-- SIDEBAR -->
+  <div class="sidebar" id="sidebar">
+    <div class="nav-section">Dashboard</div>
+    <div class="nav-item active" onclick="showPage('dashboard')">📊 Overview</div>
+    
+    <div class="nav-section">Property Management</div>
+    <div class="nav-item" onclick="showPage('calendar')">📅 Calendar Grid</div>
+    <div class="nav-item" onclick="showPage('rooms')">🏠 Room Status</div>
+    <div class="nav-item" onclick="showPage('reservations')">📋 Reservations</div>
+    <div class="nav-item" onclick="showPage('arrivals')">🛎 Arrivals</div>
+    <div class="nav-item" onclick="showPage('housekeeping')">🧹 Housekeeping</div>
+    
+    <div class="nav-section">Financial</div>
+    <div class="nav-item" onclick="showPage('advances')">💰 Advances</div>
+    <div class="nav-item" onclick="showPage('balances')">⚖ Balances</div>
+    <div class="nav-item" onclick="showPage('expenses')">🧾 Expenses</div>
+    <div class="nav-item" onclick="showPage('reports')">📈 Reports</div>
+    
+    <div class="nav-section">Operations</div>
+    <div class="nav-item" onclick="showPage('tasks')">✅ Tasks</div>
+    <div class="nav-item" onclick="showPage('maintenance')">🔧 Maintenance</div>
+    <div class="nav-item" onclick="showPage('inventory')">📦 Inventory</div>
+    <div class="nav-item" onclick="showPage('vendors')">🤝 Vendors</div>
+    
+    <div class="nav-section">Team</div>
+    <div class="nav-item" onclick="showPage('attendance')">🗓 Attendance</div>
+    <div class="nav-item" onclick="showPage('salary')">💼 Salary</div>
+    
+    <div class="nav-section">Guests</div>
+    <div class="nav-item" onclick="showPage('guests')">👥 Guest Database</div>
+    <div class="nav-item" onclick="showPage('reviews')">⭐ Reviews</div>
+    
+    <div class="nav-section">Settings</div>
+    <div class="nav-item" onclick="showPage('channel')">🔗 Channel Manager</div>
+    <div class="nav-item" onclick="showPage('rates')">💵 Rate Calendar</div>
+    <div class="nav-item" onclick="showPage('settings')">⚙️ Settings</div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="main">
+    
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="page-header">
+        <h1 class="page-title">Dashboard Overview</h1>
+        <div class="page-actions">
+          <button class="btn btn-outline btn-sm" onclick="refreshData()">🔄 Refresh</button>
+        </div>
+      </div>
+      
+      <div class="kpi-grid" id="dashboard-kpis"></div>
+      
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px">
+        <div class="card">
+          <div class="card-title">Today's Activity</div>
+          <div id="today-activity"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Pending Tasks</div>
+          <div id="pending-tasks-dash"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Low Stock Items</div>
+          <div id="low-stock-dash"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CALENDAR GRID -->
+    <div class="page" id="page-calendar">
+      <div class="page-header">
+        <h1 class="page-title">Calendar Grid View</h1>
+        <div class="page-actions">
+          <button class="btn btn-primary btn-sm" onclick="openModal('add-booking')">+ New Booking</button>
+          <button class="btn btn-outline btn-sm" onclick="exportCalendar()">📥 Export</button>
+        </div>
+      </div>
+      
+      <div class="cal-header">
+        <div class="cal-nav">
+          <button class="btn btn-outline btn-sm" onclick="changeMonth(-1)">◀ Prev</button>
+          <button class="btn btn-outline btn-sm" onclick="changeMonth(0)">Today</button>
+          <button class="btn btn-outline btn-sm" onclick="changeMonth(1)">Next ▶</button>
+        </div>
+        <div style="font-weight:700;font-size:16px" id="cal-month-label"></div>
+      </div>
+      
+      <div class="cal-grid" id="calendar-grid"></div>
+    </div>
+
+    <!-- ROOM STATUS -->
+    <div class="page" id="page-rooms">
+      <div class="page-header">
+        <h1 class="page-title">Room Status</h1>
+        <div class="page-actions">
+          <select id="room-filter" onchange="renderRooms()">
+            <option value="all">All Rooms</option>
+            <option value="vacant">Vacant</option>
+            <option value="occupied">Occupied</option>
+            <option value="reserved">Reserved</option>
+            <option value="blocked">Blocked</option>
+          </select>
+          <button class="btn btn-primary btn-sm" onclick="openModal('add-room')">+ Add Room</button>
+        </div>
+      </div>
+      <div class="room-grid" id="room-grid"></div>
+    </div>
+
+    <!-- RESERVATIONS -->
+    <div class="page" id="page-reservations">
+      <div class="page-header">
+        <h1 class="page-title">Reservations</h1>
+        <div class="page-actions">
+          <button class="btn btn-primary btn-sm" onclick="openModal('add-booking')">+ New Reservation</button>
+          <button class="btn btn-outline btn-sm" onclick="exportTable('reservations')">📥 Export</button>
+        </div>
+      </div>
+      
+      <div class="filters">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" placeholder="Search guest name, voucher..." id="res-search" oninput="renderReservations()"/>
+        </div>
+        <select id="res-status" onchange="renderReservations()">
+          <option value="">All Statuses</option>
+          <option value="Confirmed">Confirmed</option>
+          <option value="Checked In">Checked In</option>
+          <option value="Checked Out">Checked Out</option>
+          <option value="Cancelled">Cancelled</option>
+        </select>
+      </div>
+      
+      <div class="table-wrap">
+        <table><thead><tr>
+          <th>Voucher</th><th>Guest</th><th>Room</th><th>Check-in</th><th>Check-out</th>
+          <th>Nights</th><th>Total</th><th>Paid</th><th>Balance</th><th>Source</th><th>Status</th><th>Action</th>
+        </tr></thead>
+        <tbody id="reservations-tbody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- ARRIVALS -->
+    <div class="page" id="page-arrivals">
+      <div class="page-header">
+        <h1 class="page-title">Arrivals & Departures</h1>
+        <div class="page-actions">
+          <input type="date" id="arrival-date" onchange="renderArrivals()" value=""/>
+        </div>
+      </div>
+      <div id="arrivals-list"></div>
+    </div>
+
+    <!-- HOUSEKEEPING -->
+    <div class="page" id="page-housekeeping">
+      <div class="page-header">
+        <h1 class="page-title">Housekeeping</h1>
+        <div class="page-actions">
+          <button class="btn btn-warning btn-sm" onclick="markAllClean()">✨ Mark All Clean</button>
+        </div>
+      </div>
+      <div class="room-grid" id="housekeeping-grid"></div>
+    </div>
+
+    <!-- TASKS -->
+    <div class="page" id="page-tasks">
+      <div class="page-header">
+        <h1 class="page-title">Task Manager</h1>
+        <div class="page-actions">
+          <button class="btn btn-primary btn-sm" onclick="openModal('add-task')">+ New Task</button>
+        </div>
+      </div>
+      
+      <div class="filters">
+        <select id="task-status" onchange="renderTasks()">
+          <option value="pending">Pending</option>
+          <option value="done">Completed</option>
+          <option value="all">All</option>
+        </select>
+      </div>
+      
+      <div class="card">
+        <div id="tasks-list"></div>
+      </div>
+    </div>
+
+    <!-- MAINTENANCE -->
+    <div class="page" id="page-maintenance">
+      <div class="page-header">
+        <h1 class="page-title">Maintenance Log</h1>
+        <div class="page-actions">
+          <button class="btn btn-danger btn-sm" onclick="openModal('add-maintenance')">+ Log Issue</button>
+          <button class="btn btn-outline btn-sm" onclick="exportTable('maintenance')">📥 Export</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table><thead><tr>
+          <th>Date</th><th>Room</th><th>Issue</th><th>Priority</th><th>Assigned To</th><th>Status</th><th>Cost</th>
+        </tr></thead>
+        <tbody id="maintenance-tbody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- INVENTORY -->
+    <div class="page" id="page-inventory">
+      <div class="page-header">
+        <h1 class="page-title">Inventory Management</h1>
+        <div class="page-actions">
+          <button class="btn btn-primary btn-sm" onclick="openModal('add-inventory')">+ Add Item</button>
+        </div>
+      </div>
+      <div class="card" id="inventory-list"></div>
+    </div>
+
+    <!-- VENDORS -->
+    <div class="page" id="page-vendors">
+      <div class="page-header">
+        <h1 class="page-title">Vendor Management</h1>
+        <div class="page-actions">
+          <button class="btn btn-primary btn-sm" onclick="openModal('add-vendor')">+ Add Vendor</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table><thead><tr>
+          <th>Vendor Name</th><th>Category</th><th>Contact</th><th>Email</th><th>Last Order</th><th>Total Spent</th>
+        </tr></thead>
+        <tbody id="vendors-tbody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- ADVANCES -->
+    <div class="page" id="page-advances">
+      <div class="page-header">
+        <h1 class="page-title">Advance Payments</h1>
+        <div class="page-actions">
+          <button class="btn btn-success btn-sm" onclick="openModal('add-advance')">+ Record Advance</button>
+          <button class="btn btn-outline btn-sm" onclick="exportTable('advances')">📥 Export</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table><thead><tr>
+          <th>ID</th><th>Voucher</th><th>Guest</th><th>Date</th><th>Amount</th><th>Account</th><th>Collected By</th><th>Mode</th>
+        </tr></thead>
+        <tbody id="advances-tbody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- BALANCES -->
+    <div class="page" id="page-balances">
+      <div class="page-header">
+        <h1 class="page-title">Balance Due</h1>
+      </div>
+      <div class="table-wrap">
+        <table><thead><tr>
+          <th>Voucher</th><th>Guest</th><th>Check-in</th><th>Total</th><th>Advance</th><th>Balance</th><th>Collected By</th><th>Collection Date</th><th>Status</th><th>Action</th>
+        </tr></thead>
+        <tbody id="balances-tbody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- EXPENSES -->
+    <div class="page" id="page-expenses">
+      <div class="page-header">
+        <h1 class="page-title">Expenses</h1>
+        <div class="page-actions">
+          <button class="btn btn-danger btn-sm" onclick="openModal('add-expense')">+ Log Expense</button>
+          <button class="btn btn-outline btn-sm" onclick="exportTable('expenses')">📥 Export</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table><thead><tr>
+          <th>Date</th><th>Category</th><th>Description</th><th>Amount</th><th>Property</th><th>Account</th><th>Spent By</th>
+        </tr></thead>
+        <tbody id="expenses-tbody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- REPORTS -->
+    <div class="page" id="page-reports">
+      <div class="page-header">
+        <h1 class="page-title">Reports & Analytics</h1>
+      </div>
+      
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px">
+        <div class="card" style="cursor:pointer" onclick="generateReport('occupancy')">
+          <div style="font-size:32px;margin-bottom:8px">📊</div>
+          <div class="card-title">Occupancy Report</div>
+          <p style="font-size:12px;color:#6B7280">Daily/weekly/monthly occupancy rates</p>
+        </div>
+        <div class="card" style="cursor:pointer" onclick="generateReport('revenue')">
+          <div style="font-size:32px;margin-bottom:8px">💰</div>
+          <div class="card-title">Revenue Report</div>
+          <p style="font-size:12px;color:#6B7280">Revenue by property & source</p>
+        </div>
+        <div class="card" style="cursor:pointer" onclick="generateReport('pl')">
+          <div style="font-size:32px;margin-bottom:8px">📈</div>
+          <div class="card-title">Profit & Loss</div>
+          <p style="font-size:12px;color:#6B7280">Revenue vs expenses</p>
+        </div>
+        <div class="card" style="cursor:pointer" onclick="generateReport('gst')">
+          <div style="font-size:32px;margin-bottom:8px">🧾</div>
+          <div class="card-title">GST Summary</div>
+          <p style="font-size:12px;color:#6B7280">Tax calculations for filing</p>
+        </div>
+        <div class="card" style="cursor:pointer" onclick="generateReport('staff')">
+          <div style="font-size:32px;margin-bottom:8px">👥</div>
+          <div class="card-title">Staff Performance</div>
+          <p style="font-size:12px;color:#6B7280">Bookings & payments per employee</p>
+        </div>
+        <div class="card" style="cursor:pointer" onclick="generateReport('commission')">
+          <div style="font-size:32px;margin-bottom:8px">💸</div>
+          <div class="card-title">OTA Commissions</div>
+          <p style="font-size:12px;color:#6B7280">Fees paid to booking platforms</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ATTENDANCE -->
+    <div class="page" id="page-attendance">
+      <div class="page-header">
+        <h1 class="page-title">Attendance</h1>
+        <div class="page-actions">
+          <select id="att-month" onchange="renderAttendance()"></select>
+          <select id="att-year" onchange="renderAttendance()"></select>
+          <button class="btn btn-warning btn-sm" onclick="openModal('mark-attendance')">✏ Mark Today</button>
+        </div>
+      </div>
+      <div id="attendance-grid"></div>
+    </div>
+
+    <!-- SALARY -->
+    <div class="page" id="page-salary">
+      <div class="page-header">
+        <h1 class="page-title">Salary Management</h1>
+        <div class="page-actions">
+          <select id="sal-month" onchange="renderSalary()"></select>
+          <select id="sal-year" onchange="renderSalary()"></select>
+          <button class="btn btn-primary btn-sm" onclick="openModal('set-salary')">💼 Set Salaries</button>
+        </div>
+      </div>
+      <div class="kpi-grid" id="salary-summary"></div>
+      <div class="table-wrap">
+        <table><thead><tr>
+          <th>Employee</th><th>Base Salary</th><th>Present</th><th>Absent</th><th>Half Days</th>
+          <th>Deductions</th><th>Overtime</th><th>Net Salary</th><th>Status</th>
+        </tr></thead>
+        <tbody id="salary-tbody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- GUESTS -->
+    <div class="page" id="page-guests">
+      <div class="page-header">
+        <h1 class="page-title">Guest Database</h1>
+        <div class="page-actions">
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" placeholder="Search guests..." id="guest-search" oninput="renderGuests()"/>
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="exportTable('guests')">📥 Export</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table><thead><tr>
+          <th>Name</th><th>Phone</th><th>Email</th><th>Total Bookings</th><th>Total Spent</th><th>Last Stay</th><th>Rating</th>
+        </tr></thead>
+        <tbody id="guests-tbody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- REVIEWS -->
+    <div class="page" id="page-reviews">
+      <div class="page-header">
+        <h1 class="page-title">Reviews Monitor</h1>
+        <div class="page-actions">
+          <button class="btn btn-primary btn-sm" onclick="syncReviews()">🔄 Sync Reviews</button>
+        </div>
+      </div>
+      <div id="reviews-list">
+        <div class="empty-state">
+          <div style="font-size:64px;opacity:.2">⭐</div>
+          <p>No reviews yet. Sync your OTA reviews to see them here.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHANNEL MANAGER -->
+    <div class="page" id="page-channel">
+      <div class="page-header">
+        <h1 class="page-title">Channel Manager</h1>
+      </div>
+      
+      <div class="card">
+        <div class="card-title">🔗 Connected Channels</div>
+        <p style="font-size:13px;color:#6B7280;margin-bottom:16px">Sync bookings from Airbnb, Booking.com, MakeMyTrip via iCal URLs</p>
+        
+        <div style="margin-bottom:16px">
+          <div class="form-label">Airbnb iCal URL</div>
+          <input type="text" class="form-input" id="ical-airbnb" placeholder="https://www.airbnb.com/calendar/ical/..."/>
+          <button class="btn btn-primary btn-sm" style="margin-top:8px" onclick="syncIcal('airbnb')">Sync Airbnb</button>
+        </div>
+        
+        <div style="margin-bottom:16px">
+          <div class="form-label">Booking.com iCal URL</div>
+          <input type="text" class="form-input" id="ical-booking" placeholder="https://admin.booking.com/hotel/..."/>
+          <button class="btn btn-primary btn-sm" style="margin-top:8px" onclick="syncIcal('booking')">Sync Booking.com</button>
+        </div>
+        
+        <div>
+          <div class="form-label">MakeMyTrip / Other iCal URL</div>
+          <input type="text" class="form-input" id="ical-other" placeholder="iCal URL from other platform"/>
+          <button class="btn btn-primary btn-sm" style="margin-top:8px" onclick="syncIcal('other')">Sync Other</button>
+        </div>
+      </div>
+      
+      <div class="card">
+        <div class="card-title">📤 Manual Import</div>
+        <p style="font-size:13px;color:#6B7280;margin-bottom:12px">Upload CSV export from Airbnb or Booking.com</p>
+        <input type="file" accept=".csv" onchange="importBookings(event)"/>
+      </div>
+    </div>
+
+    <!-- RATE CALENDAR -->
+    <div class="page" id="page-rates">
+      <div class="page-header">
+        <h1 class="page-title">Rate Calendar</h1>
+        <div class="page-actions">
+          <button class="btn btn-primary btn-sm" onclick="openModal('set-rate')">💵 Set Custom Rate</button>
+        </div>
+      </div>
+      <div class="card">
+        <p style="font-size:13px;color:#6B7280">Set base rates and date-specific pricing for each room type.</p>
+        <div id="rate-calendar"></div>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="page" id="page-settings">
+      <div class="page-header">
+        <h1 class="page-title">Settings</h1>
+      </div>
+      
+      <div class="card">
+        <div class="card-title">🏢 Business Branding</div>
+        <p style="font-size:13px;color:#6B7280;margin-bottom:16px">Customize your dashboard name and contact details</p>
+        <div class="form-field">
+          <div class="form-label">Business/Dashboard Name *</div>
+          <input type="text" class="form-input" id="set-name" placeholder="e.g., Sunset Properties, MyStays, etc."/>
+          <p style="font-size:11px;color:#9CA3AF;margin-top:4px">This appears at the top of your dashboard</p>
+        </div>
+        <div class="form-field">
+          <div class="form-label">Contact Email</div>
+          <input type="email" class="form-input" id="set-email" placeholder="contact@yourproperties.com"/>
+        </div>
+        <div class="form-field">
+          <div class="form-label">Contact Phone</div>
+          <input type="tel" class="form-input" id="set-phone" placeholder="+91 98765 43210"/>
+        </div>
+        <button class="btn btn-primary" onclick="saveSettings()">💾 Save Changes</button>
+      </div>
+      
+      <div class="card">
+        <div class="card-title">💾 Data Management</div>
+        <p style="font-size:13px;color:#6B7280;margin-bottom:16px">Manage your data and backups</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;flex-direction:column">
+          <button class="btn btn-success" onclick="backupToGoogleDrive()" style="justify-content:flex-start">
+            ☁️ Backup to Google Drive
+            <span style="font-size:11px;font-weight:400;display:block;margin-top:4px">Save all data to cloud</span>
+          </button>
+          <button class="btn btn-outline" onclick="exportAllData()" style="justify-content:flex-start">
+            📥 Export All Data (Excel)
+            <span style="font-size:11px;font-weight:400;display:block;margin-top:4px">Download as spreadsheet</span>
+          </button>
+          <button class="btn btn-outline" onclick="importData()" style="justify-content:flex-start">
+            📤 Import Data
+            <span style="font-size:11px;font-weight:400;display:block;margin-top:4px">Restore from backup</span>
+          </button>
+          <button class="btn btn-warning" onclick="clearSampleDataOnly()" style="justify-content:flex-start">
+            🧹 Clear Sample Data
+            <span style="font-size:11px;font-weight:400;display:block;margin-top:4px">Remove demo data, keep settings</span>
+          </button>
+          <button class="btn btn-danger" onclick="clearAllData()" style="justify-content:flex-start">
+            🗑 Delete Everything
+            <span style="font-size:11px;font-weight:400;display:block;margin-top:4px">⚠️ Permanent! Will ask for confirmation</span>
+          </button>
+        </div>
+      </div>
+      
+      <div class="card">
+        <div class="card-title">👥 Users & Permissions</div>
+        <p style="font-size:13px;color:#6B7280">Coming soon: Multi-user access with role-based permissions</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal" style="display:none" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">Modal</div>
+      <button class="close-btn" onclick="closeModal()">×</button>
+    </div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+// ═══════════════════════════════════════════════════════════
+// DATA STORES
+// ═══════════════════════════════════════════════════════════
+
+const PROPERTIES = ["Villa Serena – Goa","Sky Loft – Mumbai","Garden Suite – Pune","Riverside Cottage – Rishikesh"];
+const EMPLOYEES = ["Ravi Sharma","Priya Mehta","Ankit Verma","Sunita Rao","Deepak Nair"];
+const ACCOUNTS = ["HDFC – Main Ops","ICICI – Goa","SBI – North","Kotak – Petty Cash"];
+const ROOM_TYPES = ["1 BHK Apartment","2 BHK FLAT","3 BHK with terrace","2BHK with cozy pool","Housify Olivine"];
+
+let DATA = {
+  rooms: [],
+  bookings: [],
+  advances: [],
+  expenses: [],
+  tasks: [],
+  maintenance: [],
+  inventory: [],
+  vendors: [],
+  guests: [],
+  reviews: [],
+  attendance: {},
+  salaries: {},
+  balanceCollections: {},
+  housekeeping: {}, // {roomId: {status:'clean'|'dirty', lastCleaned:date}}
+  rates: {},
+  settings: {name:"My Property Group",email:"contact@property.com",phone:"+91 98765 43210"}
+};
+
+// Sample data for demo
+const SAMPLE_DATA = {
+  rooms: [
+    {id:"RM-001",number:"004",type:"1 BHK Apartment",property:"Villa Serena – Goa",status:"vacant"},
+    {id:"RM-002",number:"401",type:"3 BHK with private terrace",property:"Villa Serena – Goa",status:"occupied"},
+    {id:"RM-003",number:"105",type:"1 BHK Apartment",property:"Sky Loft – Mumbai",status:"vacant"},
+    {id:"RM-004",number:"304",type:"1 BHK Apartment",property:"Sky Loft – Mumbai",status:"reserved"},
+    {id:"RM-005",number:"O2",type:"1 BHK Apartment",property:"Garden Suite – Pune",status:"vacant"},
+    {id:"RM-006",number:"303",type:"1 BHK Apartment",property:"Garden Suite – Pune",status:"occupied"},
+    {id:"RM-007",number:"O1",type:"The Greek House",property:"Riverside Cottage – Rishikesh",status:"occupied"},
+    {id:"RM-008",number:"402 2BHK",type:"2 BHK FLAT",property:"Villa Serena – Goa",status:"vacant"},
+    {id:"RM-009",number:"111",type:"Dornix by housify",property:"Sky Loft – Mumbai",status:"occupied"},
+    {id:"RM-010",number:"1006",type:"2bhk with cozy pool",property:"Garden Suite – Pune",status:"vacant"},
+    {id:"RM-011",number:"302",type:"1 BHK Apartment",property:"Riverside Cottage – Rishikesh",status:"vacant"},
+    {id:"RM-012",number:"403",type:"3 BHK with private terrace",property:"Villa Serena – Goa",status:"vacant"},
+  ],
+  bookings: [
+    {id:"BK-001",voucher:"VOC-4296",guest:"Mr. Sanket Jain",phone:"9876543210",email:"sanket@gmail.com",room:"111",checkin:"2025-05-14",checkout:"2025-05-15",nights:1,total:19000,source:"Airbnb",numGuests:2,employee:"Ravi Sharma",status:"Checked In",date:"2025-05-13"},
+    {id:"BK-002",voucher:"VOC-4295",guest:"Garima Garima",phone:"9812345678",email:"garima@booking.com",room:"Housify Olivine",checkin:"2025-05-21",checkout:"2025-05-22",nights:1,total:15340,source:"Airbnb",numGuests:1,employee:"Priya Mehta",status:"Confirmed",date:"2025-05-13"},
+    {id:"BK-003",voucher:"VOC-4294",guest:"Mr. Sanskar",phone:"9898989898",email:"",room:"111",checkin:"2025-06-10",checkout:"2025-06-11",nights:1,total:20000,source:"Airbnb",numGuests:2,employee:"Ankit Verma",status:"Confirmed",date:"2025-05-13"},
+    {id:"BK-004",voucher:"VOC-4293",guest:"Mr. Ashutosh",phone:"9001234567",email:"ashutosh@mail.com",room:"401",checkin:"2025-05-23",checkout:"2025-05-24",nights:1,total:7875,source:"Direct",numGuests:1,employee:"Sunita Rao",status:"Confirmed",date:"2025-05-13"},
+    {id:"BK-005",voucher:"VOC-4292",guest:"Mr. Harsh",phone:"9123456789",email:"",room:"111",checkin:"2025-05-24",checkout:"2025-05-25",nights:1,total:22000,source:"Airbnb",numGuests:2,employee:"Ravi Sharma",status:"Confirmed",date:"2025-05-13"},
+    {id:"BK-006",voucher:"VOC-4291",guest:"Swastik Dey",phone:"9234567890",email:"swastik@gmail.com",room:"O1",checkin:"2025-05-14",checkout:"2025-05-15",nights:1,total:14160,source:"Airbnb",numGuests:1,employee:"Priya Mehta",status:"Checked In",date:"2025-05-13"},
+    {id:"BK-007",voucher:"VOC-4287",guest:"Priya Verma",phone:"9345678901",email:"",room:"303",checkin:"2025-05-13",checkout:"2025-05-16",nights:3,total:12600,source:"Booking.com",numGuests:2,employee:"Ankit Verma",status:"Checked In",date:"2025-05-12"},
+    {id:"BK-008",voucher:"VOC-4286",guest:"Rahul Khanna",phone:"9456789012",email:"rahul.k@yahoo.com",room:"401",checkin:"2025-05-12",checkout:"2025-05-14",nights:2,total:8400,source:"Direct",numGuests:1,employee:"Sunita Rao",status:"Checked In",date:"2025-05-11"},
+  ],
+  advances: [
+    {id:"ADV-001",bookingId:"BK-001",guest:"Mr. Sanket Jain",date:"2025-05-13",amount:9500,account:"HDFC – Main Ops",employee:"Ravi Sharma",mode:"UPI"},
+    {id:"ADV-002",bookingId:"BK-003",guest:"Mr. Sanskar",date:"2025-05-13",amount:10000,account:"ICICI – Goa",employee:"Ankit Verma",mode:"UPI"},
+    {id:"ADV-003",bookingId:"BK-004",guest:"Mr. Ashutosh",date:"2025-05-13",amount:4000,account:"SBI – North",employee:"Sunita Rao",mode:"Bank Transfer"},
+    {id:"ADV-004",bookingId:"BK-007",guest:"Priya Verma",date:"2025-05-12",amount:6000,account:"HDFC – Main Ops",employee:"Ankit Verma",mode:"Cash"},
+    {id:"ADV-005",bookingId:"BK-008",guest:"Rahul Khanna",date:"2025-05-11",amount:8400,account:"Kotak – Petty Cash",employee:"Sunita Rao",mode:"Card"},
+  ],
+  expenses: [
+    {id:"EXP-001",date:"2025-05-12",category:"Cleaning",desc:"Weekly deep cleaning - 3 rooms",amount:2800,property:"Villa Serena – Goa",account:"HDFC – Main Ops",employee:"Priya Mehta"},
+    {id:"EXP-002",date:"2025-05-11",category:"Maintenance",desc:"AC repair Room 401",amount:4500,property:"Villa Serena – Goa",account:"ICICI – Goa",employee:"Ankit Verma"},
+    {id:"EXP-003",date:"2025-05-10",category:"Utilities",desc:"Electricity bill May",amount:6200,property:"Sky Loft – Mumbai",account:"SBI – North",employee:"Sunita Rao"},
+    {id:"EXP-004",date:"2025-05-09",category:"Supplies",desc:"Toiletries restock",amount:3400,property:"Garden Suite – Pune",account:"Kotak – Petty Cash",employee:"Deepak Nair"},
+    {id:"EXP-005",date:"2025-05-08",category:"Marketing",desc:"Google Ads campaign",amount:8000,property:"All Properties",account:"HDFC – Main Ops",employee:"Ravi Sharma"},
+  ],
+  tasks: [
+    {id:"TSK-001",title:"Deep clean Room 402 before check-in",assignedTo:"Priya Mehta",dueDate:"2025-05-15",priority:"high",desc:"Guest arriving at 2 PM",done:false},
+    {id:"TSK-002",title:"Restock minibar - Room 111",assignedTo:"Deepak Nair",dueDate:"2025-05-14",priority:"medium",desc:"",done:false},
+    {id:"TSK-003",title:"AC servicing - All rooms",assignedTo:"Ankit Verma",dueDate:"2025-05-20",priority:"low",desc:"",done:false},
+    {id:"TSK-004",title:"Check WiFi - Room 304",assignedTo:"Sunita Rao",dueDate:"2025-05-14",priority:"high",desc:"Guest complaint",done:false},
+  ],
+  maintenance: [
+    {id:"MNT-001",date:"2025-05-12",room:"401",issue:"AC not cooling",priority:"high",assignedTo:"Ankit Verma",cost:4500,status:"completed"},
+    {id:"MNT-002",date:"2025-05-11",room:"303",issue:"Bathroom drain slow",priority:"medium",assignedTo:"Priya Mehta",cost:2900,status:"completed"},
+    {id:"MNT-003",date:"2025-05-13",room:"304",issue:"WiFi not working",priority:"high",assignedTo:"Sunita Rao",cost:0,status:"inprogress"},
+  ],
+  inventory: [
+    {id:"INV-001",name:"Shampoo bottles",category:"Toiletries",quantity:45,unit:"pcs",minQty:20},
+    {id:"INV-002",name:"Bath towels",category:"Linen",quantity:8,unit:"pcs",minQty:15},
+    {id:"INV-003",name:"Toilet paper",category:"Toiletries",quantity:120,unit:"rolls",minQty:50},
+    {id:"INV-004",name:"Hand soap",category:"Toiletries",quantity:32,unit:"pcs",minQty:25},
+    {id:"INV-005",name:"Bed sheets",category:"Linen",quantity:5,unit:"sets",minQty:12},
+    {id:"INV-006",name:"Cleaning solution",category:"Cleaning",quantity:8,unit:"liters",minQty:5},
+  ],
+  vendors: [
+    {id:"VEN-001",name:"ABC Linen Suppliers",category:"Linen",contact:"9876543210",email:"abc@linen.com",totalSpent:45000,lastOrder:"2025-04-28"},
+    {id:"VEN-002",name:"Clean & Co.",category:"Cleaning",contact:"9812345678",email:"contact@cleanco.com",totalSpent:28000,lastOrder:"2025-05-12"},
+    {id:"VEN-003",name:"Maintenance Pro",category:"Repairs",contact:"9898989898",email:"info@mainpro.com",totalSpent:32000,lastOrder:"2025-05-11"},
+  ],
+  housekeeping: {
+    "RM-001":{status:"clean",lastCleaned:"2025-05-13"},
+    "RM-002":{status:"dirty",lastCleaned:"2025-05-11"},
+    "RM-003":{status:"clean",lastCleaned:"2025-05-13"},
+    "RM-006":{status:"dirty",lastCleaned:"2025-05-10"},
+    "RM-007":{status:"clean",lastCleaned:"2025-05-13"},
+    "RM-009":{status:"dirty",lastCleaned:"2025-05-12"},
+  },
+  balanceCollections: {"BK-008":{employee:"Sunita Rao",date:"2025-05-12"}},
+  attendance: {},
+  salaries: {},
+  rates: {},
+  settings: {name:"My Property Group",email:"contact@property.com",phone:"+91 98765 43210"}
+};
+
+// Load from localStorage
+const loadData = () => {
+  const saved = localStorage.getItem('pmData');
+  if(saved) {
+    DATA = JSON.parse(saved);
+  } else {
+    // Load sample data on first run
+    DATA = JSON.parse(JSON.stringify(SAMPLE_DATA));
+    saveData();
+  }
+};
+
+// Save to localStorage
+const saveData = () => {
+  localStorage.setItem('pmData', JSON.stringify(DATA));
+};
+
+// Helpers
+const fmt = n => "₹" + Number(n).toLocaleString("en-IN");
+const today = () => new Date().toISOString().slice(0,10);
+const nextId = (prefix) => `${prefix}-${String(Date.now()).slice(-6)}`;
+
+// ═══════════════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════════════
+
+function showPage(pageId) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-'+pageId).classList.add('active');
+  event.target.classList.add('active');
+  
+  const renders = {
+    dashboard:renderDashboard, calendar:renderCalendar, rooms:renderRooms,
+    reservations:renderReservations, arrivals:renderArrivals, housekeeping:renderHousekeeping,
+    advances:renderAdvances, balances:renderBalances, expenses:renderExpenses,
+    tasks:renderTasks, maintenance:renderMaintenance, inventory:renderInventory,
+    vendors:renderVendors, attendance:renderAttendance, salary:renderSalary,
+    guests:renderGuests, reviews:renderReviews, settings:loadSettingsForm
+  };
+  if(renders[pageId]) renders[pageId]();
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+// ═══════════════════════════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════════════════════════
+
+function renderDashboard() {
+  const totalRev = DATA.bookings.reduce((s,b)=>s+b.total,0);
+  const totalAdv = DATA.advances.reduce((s,a)=>s+a.amount,0);
+  const totalExp = DATA.expenses.reduce((s,e)=>s+e.amount,0);
+  const occupiedRooms = DATA.bookings.filter(b=>b.status==="Checked In").length;
+  const todayArr = DATA.bookings.filter(b=>b.checkin===today()).length;
+  const todayDep = DATA.bookings.filter(b=>b.checkout===today()).length;
+  
+  const kpis = [
+    {label:"Total Revenue",value:fmt(totalRev),sub:`${DATA.bookings.length} bookings`,color:"#6366F1"},
+    {label:"Current Occupancy",value:occupiedRooms,sub:`${DATA.rooms.length} total rooms`,color:"#10B981"},
+    {label:"Today's Arrivals",value:todayArr,sub:`${todayDep} departures`,color:"#F59E0B"},
+    {label:"Balance Pending",value:fmt(totalRev-totalAdv),sub:"to be collected",color:"#EF4444"},
+    {label:"Total Expenses",value:fmt(totalExp),sub:`${DATA.expenses.length} entries`,color:"#8B5CF6"},
+    {label:"Net Profit",value:fmt(totalRev-totalExp),sub:"revenue − expenses",color:"#10B981"},
+  ];
+  
+  document.getElementById('dashboard-kpis').innerHTML = kpis.map(k=>`
+    <div class="kpi-card" style="border-top-color:${k.color}">
+      <div class="kpi-label">${k.label}</div>
+      <div class="kpi-value">${k.value}</div>
+      <div class="kpi-sub">${k.sub}</div>
+    </div>`).join("");
+  
+  // Today's activity
+  let actHtml = "";
+  const todayBookings = DATA.bookings.filter(b=>b.checkin===today()||b.checkout===today());
+  if(!todayBookings.length) actHtml = `<p style="color:#9CA3AF;font-size:13px">No check-ins or check-outs today</p>`;
+  else {
+    todayBookings.forEach(b=>{
+      const type = b.checkin===today() ? "Check-in" : "Check-out";
+      const color = type==="Check-in" ? "#10B981" : "#F59E0B";
+      actHtml += `<div style="padding:8px 0;border-bottom:1px solid #F3F4F6;font-size:13px">
+        <span style="font-weight:600">${b.guest}</span> · <span style="color:${color}">${type}</span> · ${b.room}
+      </div>`;
+    });
+  }
+  document.getElementById('today-activity').innerHTML = actHtml;
+  
+  // Pending tasks
+  const pendingTasks = DATA.tasks.filter(t=>!t.done).slice(0,5);
+  document.getElementById('pending-tasks-dash').innerHTML = pendingTasks.length 
+    ? pendingTasks.map(t=>`<div style="padding:6px 0;font-size:13px;color:#374151">${t.title}</div>`).join("")
+    : `<p style="color:#9CA3AF;font-size:13px">No pending tasks</p>`;
+  
+  // Low stock
+  const lowStock = DATA.inventory.filter(i=>i.quantity <= i.minQty).slice(0,5);
+  document.getElementById('low-stock-dash').innerHTML = lowStock.length
+    ? lowStock.map(i=>`<div style="padding:6px 0;font-size:13px;color:#EF4444">${i.name} (${i.quantity} left)</div>`).join("")
+    : `<p style="color:#9CA3AF;font-size:13px">All items in stock</p>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// CALENDAR GRID
+// ═══════════════════════════════════════════════════════════
+
+let calMonth = new Date().getMonth();
+let calYear = new Date().getFullYear();
+
+function changeMonth(delta) {
+  if(delta===0) { calMonth=new Date().getMonth(); calYear=new Date().getFullYear(); }
+  else {
+    calMonth += delta;
+    if(calMonth<0) { calMonth=11; calYear--; }
+    if(calMonth>11) { calMonth=0; calYear++; }
+  }
+  renderCalendar();
+}
+
+function renderCalendar() {
+  const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  document.getElementById('cal-month-label').textContent = `${monthNames[calMonth]} ${calYear}`;
+  
+  const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
+  const dates = Array.from({length:daysInMonth},(_,i)=>i+1);
+  
+  let html = `<table class="cal-table"><thead><tr><th class="cal-room-name">Room</th>`;
+  dates.forEach(d => {
+    const date = new Date(calYear, calMonth, d);
+    const dow = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][date.getDay()];
+    html += `<th>${dow}<br/>${d}</th>`;
+  });
+  html += `</tr></thead><tbody>`;
+  
+  DATA.rooms.forEach(room => {
+    html += `<tr><td class="cal-room-name">${room.number} - ${room.type}</td>`;
+    dates.forEach(d => {
+      const dateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+      const booking = DATA.bookings.find(b=>b.room===room.number && dateStr>=b.checkin && dateStr<=b.checkout && b.status!=="Cancelled");
+      let cellClass = "cal-cell vacant";
+      let cellContent = "0<br/>—";
+      if(booking) {
+        cellClass = booking.status==="Checked In" ? "cal-cell occupied" : "cal-cell reserved";
+        cellContent = `1<br/><div class="cal-guest-name">${booking.guest.split(' ')[0]}</div>`;
+      }
+      html += `<td><div class="${cellClass}">${cellContent}</div></td>`;
+    });
+    html += `</tr>`;
+  });
+  
+  // Availability row
+  html += `<tr><td class="cal-room-name" style="font-weight:700">Available Inventory</td>`;
+  dates.forEach(d => {
+    const dateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const occupied = DATA.bookings.filter(b=>dateStr>=b.checkin && dateStr<=b.checkout && b.status!=="Cancelled").length;
+    const avail = DATA.rooms.length - occupied;
+    html += `<td style="text-align:center;font-weight:700;padding:8px">${avail}</td>`;
+  });
+  html += `</tr>`;
+  
+  // Occupancy % row
+  html += `<tr><td class="cal-room-name" style="font-weight:700">Occupancy %</td>`;
+  dates.forEach(d => {
+    const dateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const occupied = DATA.bookings.filter(b=>dateStr>=b.checkin && dateStr<=b.checkout && b.status!=="Cancelled").length;
+    const pct = DATA.rooms.length ? Math.round(occupied/DATA.rooms.length*100) : 0;
+    html += `<td style="text-align:center;font-weight:700;padding:8px">${pct}%</td>`;
+  });
+  html += `</tr></tbody></table>`;
+  
+  document.getElementById('calendar-grid').innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════════
+// ROOM STATUS
+// ═══════════════════════════════════════════════════════════
+
+function renderRooms() {
+  const filter = document.getElementById('room-filter')?.value || 'all';
+  let rooms = DATA.rooms;
+  if(filter!=='all') rooms = rooms.filter(r=>r.status===filter);
+  
+  if(!rooms.length) {
+    document.getElementById('room-grid').innerHTML = `<div class="empty-state"><p>No rooms found. Add rooms from Settings.</p></div>`;
+    return;
+  }
+  
+  const html = rooms.map(room => {
+    const booking = DATA.bookings.find(b=>b.room===room.number && b.status==="Checked In");
+    const statusColors = {vacant:"#10B981",occupied:"#EF4444",reserved:"#F59E0B",blocked:"#6B7280"};
+    const guestHtml = booking ? `<div class="room-guest">${booking.guest}</div>
+      <div class="ota-badge">${booking.source==="Airbnb"?"🏠":"🌐"} ${booking.source}</div>` : "";
+    
+    return `<div class="room-card ${room.status}">
+      <div class="room-status-badge" style="background:${statusColors[room.status]};color:#fff">${room.status.toUpperCase()}</div>
+      <div class="room-number">${room.number}</div>
+      <div class="room-type">${room.type}</div>
+      ${guestHtml}
+    </div>`;
+  }).join("");
+  
+  document.getElementById('room-grid').innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════════
+// RESERVATIONS
+// ═══════════════════════════════════════════════════════════
+
+function renderReservations() {
+  const search = document.getElementById('res-search')?.value.toLowerCase() || "";
+  const status = document.getElementById('res-status')?.value || "";
+  
+  let bookings = DATA.bookings.filter(b => 
+    (!search || b.guest.toLowerCase().includes(search) || b.voucher.toLowerCase().includes(search)) &&
+    (!status || b.status===status)
+  );
+  
+  if(!bookings.length) {
+    document.getElementById('reservations-tbody').innerHTML = `<tr><td colspan="12" style="text-align:center;padding:40px;color:#9CA3AF">No reservations found</td></tr>`;
+    return;
+  }
+  
+  const html = bookings.map(b => {
+    const adv = DATA.advances.filter(a=>a.bookingId===b.id).reduce((x,a)=>x+a.amount,0);
+    const bal = b.total - adv;
+    const statusColors = {"Confirmed":"#3B82F6","Checked In":"#10B981","Checked Out":"#8B5CF6","Cancelled":"#EF4444"};
+    
+    return `<tr>
+      <td style="font-family:monospace;font-weight:600">${b.voucher}</td>
+      <td><div style="font-weight:600">${b.guest}</div><div style="font-size:11px;color:#9CA3AF">${b.phone}</div></td>
+      <td>${b.room}</td>
+      <td>${b.checkin}</td>
+      <td>${b.checkout}</td>
+      <td>${b.nights}</td>
+      <td style="font-weight:700">${fmt(b.total)}</td>
+      <td style="color:#10B981;font-weight:600">${fmt(adv)}</td>
+      <td style="color:${bal>0?"#EF4444":"#10B981"};font-weight:700">${fmt(Math.abs(bal))}</td>
+      <td><span class="tag" style="background:${statusColors[b.status]}22;color:${statusColors[b.status]}">${b.source}</span></td>
+      <td><span class="tag" style="background:${statusColors[b.status]}22;color:${statusColors[b.status]}">${b.status}</span></td>
+      <td><button class="btn btn-outline btn-sm" onclick='viewBooking("${b.id}")'>View</button></td>
+    </tr>`;
+  }).join("");
+  
+  document.getElementById('reservations-tbody').innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════════
+// ARRIVALS
+// ═══════════════════════════════════════════════════════════
+
+function renderArrivals() {
+  const date = document.getElementById('arrival-date')?.value || today();
+  const arrivals = DATA.bookings.filter(b=>b.checkin===date);
+  const departures = DATA.bookings.filter(b=>b.checkout===date);
+  
+  let html = "";
+  if(!arrivals.length && !departures.length) {
+    html = `<div class="empty-state"><p>No arrivals or departures on this date</p></div>`;
+  } else {
+    if(arrivals.length) {
+      html += `<div class="card"><div class="card-title">🛎 Check-ins (${arrivals.length})</div>`;
+      arrivals.forEach(b => {
+        const adv = DATA.advances.filter(a=>a.bookingId===b.id).reduce((x,a)=>x+a.amount,0);
+        const bal = b.total - adv;
+        html += `<div style="border-bottom:1px solid #F3F4F6;padding:12px 0">
+          <div style="font-weight:700;font-size:15px">${b.guest}</div>
+          <div style="font-size:12px;color:#6B7280;margin-top:4px">
+            📞 ${b.phone} · 🏠 ${b.room} · ${b.source} · ${b.numGuests||1} guests
+          </div>
+          <div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap">
+            <span class="tag" style="background:#D1FAE5;color:#065F46">Total: ${fmt(b.total)}</span>
+            <span class="tag" style="background:#FEF3C7;color:#92400E">Advance: ${fmt(adv)}</span>
+            ${bal>0?`<span class="tag" style="background:#FEE2E2;color:#991B1B">Balance: ${fmt(bal)}</span>`:""}
+          </div>
+        </div>`;
+      });
+      html += `</div>`;
+    }
+    
+    if(departures.length) {
+      html += `<div class="card"><div class="card-title">🚪 Check-outs (${departures.length})</div>`;
+      departures.forEach(b => {
+        html += `<div style="border-bottom:1px solid #F3F4F6;padding:12px 0">
+          <div style="font-weight:700;font-size:15px">${b.guest}</div>
+          <div style="font-size:12px;color:#6B7280;margin-top:4px">
+            📞 ${b.phone} · 🏠 ${b.room}
+          </div>
+        </div>`;
+      });
+      html += `</div>`;
+    }
+  }
+  
+  document.getElementById('arrivals-list').innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════════
+// HOUSEKEEPING
+// ═══════════════════════════════════════════════════════════
+
+function renderHousekeeping() {
+  if(!DATA.rooms.length) {
+    document.getElementById('housekeeping-grid').innerHTML = `<div class="empty-state"><p>No rooms to clean</p></div>`;
+    return;
+  }
+  
+  const html = DATA.rooms.map(room => {
+    const hk = DATA.housekeeping[room.id] || {status:'clean',lastCleaned:today()};
+    const statusColors = {clean:"#10B981",dirty:"#EF4444",maintenance:"#F59E0B"};
+    const booking = DATA.bookings.find(b=>b.room===room.number && b.status==="Checked In");
+    
+    return `<div class="room-card ${room.status}" onclick='toggleClean("${room.id}")'>
+      <div class="room-status-badge" style="background:${statusColors[hk.status]};color:#fff">${hk.status.toUpperCase()}</div>
+      <div class="room-number">${room.number}</div>
+      <div class="room-type">${room.type}</div>
+      ${booking?`<div class="room-guest">${booking.guest}</div>`:""}
+      <div style="font-size:11px;color:#9CA3AF;margin-top:8px">Last cleaned: ${hk.lastCleaned}</div>
+    </div>`;
+  }).join("");
+  
+  document.getElementById('housekeeping-grid').innerHTML = html;
+}
+
+function toggleClean(roomId) {
+  if(!DATA.housekeeping[roomId]) DATA.housekeeping[roomId] = {status:'clean',lastCleaned:today()};
+  const hk = DATA.housekeeping[roomId];
+  hk.status = hk.status==='clean' ? 'dirty' : 'clean';
+  hk.lastCleaned = today();
+  saveData();
+  renderHousekeeping();
+}
+
+function markAllClean() {
+  DATA.rooms.forEach(r => {
+    DATA.housekeeping[r.id] = {status:'clean',lastCleaned:today()};
+  });
+  saveData();
+  renderHousekeeping();
+  alert('All rooms marked as clean ✨');
+}
+
+// ═══════════════════════════════════════════════════════════
+// TASKS
+// ═══════════════════════════════════════════════════════════
+
+function renderTasks() {
+  const statusFilter = document.getElementById('task-status')?.value || 'pending';
+  let tasks = DATA.tasks;
+  if(statusFilter==='pending') tasks = tasks.filter(t=>!t.done);
+  if(statusFilter==='done') tasks = tasks.filter(t=>t.done);
+  
+  if(!tasks.length) {
+    document.getElementById('tasks-list').innerHTML = `<p style="color:#9CA3AF;text-align:center;padding:40px">No tasks</p>`;
+    return;
+  }
+  
+  const html = tasks.map(t => {
+    const priorityColors = {high:"#EF4444",medium:"#F59E0B",low:"#3B82F6"};
+    return `<div class="task-item ${t.done?'done':''} priority-${t.priority}">
+      <div>
+        <input type="checkbox" ${t.done?'checked':''} onchange='toggleTask("${t.id}")'/>
+        <span style="margin-left:8px;font-weight:600">${t.title}</span>
+        <div style="font-size:11px;color:#6B7280;margin-top:4px">${t.assignedTo} · ${t.dueDate}</div>
+      </div>
+      <span class="tag" style="background:${priorityColors[t.priority]}22;color:${priorityColors[t.priority]}">${t.priority}</span>
+    </div>`;
+  }).join("");
+  
+  document.getElementById('tasks-list').innerHTML = html;
+}
+
+function toggleTask(id) {
+  const task = DATA.tasks.find(t=>t.id===id);
+  if(task) task.done = !task.done;
+  saveData();
+  renderTasks();
+}
+
+// ═══════════════════════════════════════════════════════════
+// MAINTENANCE
+// ═══════════════════════════════════════════════════════════
+
+function renderMaintenance() {
+  if(!DATA.maintenance.length) {
+    document.getElementById('maintenance-tbody').innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;color:#9CA3AF">No maintenance logs</td></tr>`;
+    return;
+  }
+  
+  const html = DATA.maintenance.map(m => {
+    const priorityColors = {high:"#EF4444",medium:"#F59E0B",low:"#3B82F6"};
+    const statusColors = {pending:"#F59E0B",inprogress:"#3B82F6",completed:"#10B981"};
+    return `<tr>
+      <td>${m.date}</td>
+      <td>${m.room}</td>
+      <td>${m.issue}</td>
+      <td><span class="tag" style="background:${priorityColors[m.priority]}22;color:${priorityColors[m.priority]}">${m.priority}</span></td>
+      <td>${m.assignedTo}</td>
+      <td><span class="tag" style="background:${statusColors[m.status]}22;color:${statusColors[m.status]}">${m.status}</span></td>
+      <td>${m.cost?fmt(m.cost):"—"}</td>
+    </tr>`;
+  }).join("");
+  
+  document.getElementById('maintenance-tbody').innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════════
+// INVENTORY
+// ═══════════════════════════════════════════════════════════
+
+function renderInventory() {
+  if(!DATA.inventory.length) {
+    document.getElementById('inventory-list').innerHTML = `<p style="color:#9CA3AF;text-align:center;padding:40px">No inventory items</p>`;
+    return;
+  }
+  
+  const html = DATA.inventory.map(i => {
+    const isLow = i.quantity <= i.minQty;
+    return `<div class="inv-item">
+      <div>
+        <div style="font-weight:600">${i.name}</div>
+        <div style="font-size:11px;color:#6B7280">${i.category}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <span style="font-weight:700">${i.quantity} ${i.unit}</span>
+        <span class="stock-badge ${isLow?'stock-low':'stock-ok'}">${isLow?'Low Stock':'OK'}</span>
+      </div>
+    </div>`;
+  }).join("");
+  
+  document.getElementById('inventory-list').innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════════
+// VENDORS
+// ═══════════════════════════════════════════════════════════
+
+function renderVendors() {
+  if(!DATA.vendors.length) {
+    document.getElementById('vendors-tbody').innerHTML = `<tr><td colspan="6" style="text-align:center;padding:40px;color:#9CA3AF">No vendors added</td></tr>`;
+    return;
+  }
+  
+  const html = DATA.vendors.map(v => `<tr>
+    <td style="font-weight:600">${v.name}</td>
+    <td>${v.category}</td>
+    <td>${v.contact}</td>
+    <td>${v.email}</td>
+    <td>${v.lastOrder||"—"}</td>
+    <td style="font-weight:700">${v.totalSpent?fmt(v.totalSpent):"—"}</td>
+  </tr>`).join("");
+  
+  document.getElementById('vendors-tbody').innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════════
+// ADVANCES / BALANCES / EXPENSES (Similar to v2)
+// ═══════════════════════════════════════════════════════════
+
+function renderAdvances() {
+  if(!DATA.advances.length) {
+    document.getElementById('advances-tbody').innerHTML = `<tr><td colspan="8" style="text-align:center;padding:40px;color:#9CA3AF">No advances recorded</td></tr>`;
+    return;
+  }
+  const html = DATA.advances.map(a=>`<tr>
+    <td style="font-family:monospace">${a.id}</td>
+    <td>${a.bookingId}</td>
+    <td style="font-weight:600">${a.guest}</td>
+    <td>${a.date}</td>
+    <td style="font-weight:700;color:#10B981">${fmt(a.amount)}</td>
+    <td>${a.account}</td>
+    <td>${a.employee}</td>
+    <td><span class="tag" style="background:#EEF2FF;color:#4338CA">${a.mode}</span></td>
+  </tr>`).join("");
+  document.getElementById('advances-tbody').innerHTML = html;
+}
+
+function renderBalances() {
+  if(!DATA.bookings.length) {
+    document.getElementById('balances-tbody').innerHTML = `<tr><td colspan="10" style="text-align:center;padding:40px;color:#9CA3AF">No bookings</td></tr>`;
+    return;
+  }
+  const html = DATA.bookings.map(b=>{
+    const adv = DATA.advances.filter(a=>a.bookingId===b.id).reduce((x,a)=>x+a.amount,0);
+    const bal = b.total - adv;
+    const col = DATA.balanceCollections[b.id];
+    const statusLabel = col?"Collected":bal<=0?"Settled":"Pending";
+    const statusColors = {Settled:"#10B981",Pending:"#F59E0B",Collected:"#10B981"};
+    return `<tr>
+      <td style="font-family:monospace">${b.voucher}</td>
+      <td style="font-weight:600">${b.guest}</td>
+      <td>${b.checkin}</td>
+      <td style="font-weight:700">${fmt(b.total)}</td>
+      <td style="color:#10B981;font-weight:600">${fmt(adv)}</td>
+      <td style="font-weight:700;color:${bal>0?"#EF4444":"#10B981"}">${fmt(Math.abs(bal))}</td>
+      <td>${col?col.employee:"—"}</td>
+      <td>${col?col.date:"—"}</td>
+      <td><span class="tag" style="background:${statusColors[statusLabel]}22;color:${statusColors[statusLabel]}">${statusLabel}</span></td>
+      <td>${(!col&&bal>0)?`<button class="btn btn-success btn-sm" onclick='markBalanceCollected("${b.id}")'>Collect</button>`:"—"}</td>
+    </tr>`;
+  }).join("");
+  document.getElementById('balances-tbody').innerHTML = html;
+}
+
+function renderExpenses() {
+  if(!DATA.expenses.length) {
+    document.getElementById('expenses-tbody').innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;color:#9CA3AF">No expenses logged</td></tr>`;
+    return;
+  }
+  const html = DATA.expenses.map(e=>`<tr>
+    <td>${e.date}</td>
+    <td>${e.category}</td>
+    <td>${e.desc}</td>
+    <td style="font-weight:700;color:#EF4444">${fmt(e.amount)}</td>
+    <td>${e.property}</td>
+    <td>${e.account}</td>
+    <td>${e.employee}</td>
+  </tr>`).join("");
+  document.getElementById('expenses-tbody').innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════════
+// ATTENDANCE / SALARY (Similar to v2)
+// ═══════════════════════════════════════════════════════════
+
+function renderAttendance() {
+  const month = parseInt(document.getElementById('att-month')?.value || new Date().getMonth());
+  const year = parseInt(document.getElementById('att-year')?.value || new Date().getFullYear());
+  const daysInMonth = new Date(year, month+1, 0).getDate();
+  
+  let html = `<style>
+    .att-legend{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0 16px}
+    .att-legend span{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;color:#374151}
+    .att-legend .dot{width:10px;height:10px;border-radius:3px}
+    .att-emp-card{background:#fff;border:1px solid #E5E7EB;border-radius:12px;padding:18px;margin-bottom:14px}
+    .att-emp-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+    .att-emp-name{font-weight:700;font-size:15px;color:#1A1A2E}
+    .att-emp-stats{display:flex;gap:12px;font-size:12px}
+    .att-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(36px,1fr));gap:4px}
+    .att-cell{height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;cursor:pointer;border:2px solid transparent;transition:all .15s;user-select:none}
+    .att-cell:hover{transform:scale(1.05)}
+    .att-cell.P{background:#D1FAE5;color:#065F46;border-color:#6EE7B7}
+    .att-cell.A{background:#FEE2E2;color:#991B1B;border-color:#FCA5A5}
+    .att-cell.H{background:#FEF3C7;color:#92400E;border-color:#FCD34D}
+    .att-cell.L{background:#EDE9FE;color:#5B21B6;border-color:#C4B5FD}
+    .att-cell.WO{background:#F3F4F6;color:#9CA3AF;border-color:#E5E7EB}
+    .att-cell.none{background:#F9FAFB;color:#D1D5DB;border-color:#F3F4F6}
+  </style>`;
+  
+  html += `<div class="att-legend">
+    <span><span class="dot" style="background:#6EE7B7"></span>P – Present</span>
+    <span><span class="dot" style="background:#FCA5A5"></span>A – Absent</span>
+    <span><span class="dot" style="background:#FCD34D"></span>H – Half Day</span>
+    <span><span class="dot" style="background:#C4B5FD"></span>L – Leave</span>
+    <span><span class="dot" style="background:#E5E7EB"></span>WO – Week Off</span>
+  </div>`;
+  
+  EMPLOYEES.forEach(emp => {
+    const key = `${emp}_${year}-${String(month+1).padStart(2,"0")}`;
+    const rec = DATA.attendance[key] || {};
+    const P = Object.values(rec).filter(v=>v==="P").length;
+    const A = Object.values(rec).filter(v=>v==="A").length;
+    const H = Object.values(rec).filter(v=>v==="H").length;
+    const L = Object.values(rec).filter(v=>v==="L").length;
+    
+    html += `<div class="att-emp-card">
+      <div class="att-emp-header">
+        <div class="att-emp-name">${emp}</div>
+        <div class="att-emp-stats">
+          <span style="color:#065F46;font-weight:700">P: ${P}</span>
+          <span style="color:#991B1B;font-weight:700">A: ${A}</span>
+          <span style="color:#92400E;font-weight:700">H: ${H}</span>
+          <span style="color:#5B21B6;font-weight:700">L: ${L}</span>
+        </div>
+      </div>
+      <div class="att-grid">`;
+    
+    for(let d=1; d<=daysInMonth; d++) {
+      const dow = new Date(year, month, d).getDay();
+      const val = rec[d] || (dow===0 ? "WO" : "none");
+      html += `<div class="att-cell ${val}" onclick='cycleAtt("${emp}",${year},${month},${d})'>${d}</div>`;
+    }
+    
+    html += `</div></div>`;
+  });
+  
+  document.getElementById('attendance-grid').innerHTML = html;
+}
+
+function cycleAtt(emp, year, month, day) {
+  const key = `${emp}_${year}-${String(month+1).padStart(2,"0")}`;
+  if(!DATA.attendance[key]) DATA.attendance[key] = {};
+  const cycle = ["none","P","A","H","L","WO"];
+  const cur = DATA.attendance[key][day] || "none";
+  const next = cycle[(cycle.indexOf(cur)+1) % cycle.length];
+  DATA.attendance[key][day] = next;
+  saveData();
+  renderAttendance();
+}
+
+function renderSalary() {
+  const month = parseInt(document.getElementById('sal-month')?.value || new Date().getMonth());
+  const year = parseInt(document.getElementById('sal-year')?.value || new Date().getFullYear());
+  const mkey = String(month+1).padStart(2,"0");
+  const daysInMonth = new Date(year, month+1, 0).getDate();
+  const workingDaysInMonth = Array.from({length:daysInMonth},(_,i)=>new Date(year,month,i+1).getDay()).filter(d=>d!==0).length;
+  
+  let totalSalaryPaid=0, totalDeductions=0, totalPresent=0;
+  const rows = EMPLOYEES.map(emp => {
+    const key = `${emp}_${year}-${mkey}`;
+    const rec = DATA.attendance[key] || {};
+    const base = (DATA.salaries[emp]||{}).base || 0;
+    const otRate = (DATA.salaries[emp]||{}).overtime || 0;
+    const P = Object.values(rec).filter(v=>v==="P").length;
+    const A = Object.values(rec).filter(v=>v==="A").length;
+    const H = Object.values(rec).filter(v=>v==="H").length;
+    const L = Object.values(rec).filter(v=>v==="L").length;
+    const effectiveDays = P + H*0.5;
+    const deduction = base>0 && workingDaysInMonth>0 ? Math.round((A*(base/workingDaysInMonth))) : 0;
+    const overtimePay = otRate * P;
+    const net = Math.max(0, base - deduction + overtimePay);
+    totalSalaryPaid += net; totalDeductions += deduction; totalPresent += P;
+    const paid = (DATA.salaries[emp]||{}).paid || {};
+    const isPaid = paid[`${year}-${mkey}`];
+    
+    return `<tr>
+      <td style="font-weight:600">${emp}</td>
+      <td>${base>0?fmt(base):'<span style="color:#9CA3AF;font-size:11px">Not set</span>'}</td>
+      <td style="color:#10B981;font-weight:600">${P}</td>
+      <td style="color:#EF4444;font-weight:600">${A}</td>
+      <td style="color:#F59E0B;font-weight:600">${H}</td>
+      <td>${deduction>0?fmt(deduction):"—"}</td>
+      <td style="color:#10B981">${overtimePay>0?fmt(overtimePay):"—"}</td>
+      <td style="font-weight:800;color:#1A1A2E;font-size:15px">${net>0?fmt(net):"—"}</td>
+      <td>${isPaid?`<span class="tag" style="background:#D1FAE5;color:#065F46">✓ Paid</span>`:`${net>0?`<button class="btn btn-success btn-sm" onclick='markSalaryPaid("${emp}",${year},"${mkey}")'>Mark Paid</button>`:"—"}`}</td>
+    </tr>`;
+  });
+  
+  document.getElementById('salary-tbody').innerHTML = rows.join("");
+  
+  const kpis = [
+    {label:"Total Payroll",value:fmt(totalSalaryPaid),sub:`${EMPLOYEES.length} employees`,color:"#8B5CF6"},
+    {label:"Total Deductions",value:fmt(totalDeductions),sub:"absences",color:"#EF4444"},
+    {label:"Total Present Days",value:totalPresent,sub:"across all staff",color:"#10B981"},
+    {label:"Working Days",value:workingDaysInMonth,sub:"this month",color:"#3B82F6"},
+  ];
+  
+  document.getElementById('salary-summary').innerHTML = kpis.map(k=>`
+    <div class="kpi-card" style="border-top-color:${k.color}">
+      <div class="kpi-label">${k.label}</div>
+      <div class="kpi-value">${k.value}</div>
+      <div class="kpi-sub">${k.sub}</div>
+    </div>`).join("");
+}
+
+function markSalaryPaid(emp, year, mkey) {
+  if(!DATA.salaries[emp]) DATA.salaries[emp] = {};
+  if(!DATA.salaries[emp].paid) DATA.salaries[emp].paid = {};
+  DATA.salaries[emp].paid[`${year}-${mkey}`] = true;
+  saveData();
+  renderSalary();
+  alert(`Salary marked as paid for ${emp}!`);
+}
+
+// ═══════════════════════════════════════════════════════════
+// GUESTS / REVIEWS
+// ═══════════════════════════════════════════════════════════
+
+function renderGuests() {
+  // Build guest database from bookings
+  const guestMap = {};
+  DATA.bookings.forEach(b => {
+    if(!guestMap[b.guest]) guestMap[b.guest] = {name:b.guest,phone:b.phone,email:b.email||"",bookings:0,spent:0,lastStay:b.checkout};
+    guestMap[b.guest].bookings++;
+    guestMap[b.guest].spent += b.total;
+    if(b.checkout > guestMap[b.guest].lastStay) guestMap[b.guest].lastStay = b.checkout;
+  });
+  
+  const guests = Object.values(guestMap);
+  if(!guests.length) {
+    document.getElementById('guests-tbody').innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;color:#9CA3AF">No guests yet</td></tr>`;
+    return;
+  }
+  
+  const html = guests.map(g=>`<tr>
+    <td style="font-weight:600">${g.name}</td>
+    <td>${g.phone}</td>
+    <td>${g.email}</td>
+    <td>${g.bookings}</td>
+    <td style="font-weight:700">${fmt(g.spent)}</td>
+    <td>${g.lastStay}</td>
+    <td>⭐⭐⭐⭐⭐</td>
+  </tr>`).join("");
+  
+  document.getElementById('guests-tbody').innerHTML = html;
+}
+
+function renderReviews() {
+  // Reviews sync feature - placeholder
+}
+
+function syncReviews() {
+  alert('Review sync feature coming soon. This will pull reviews from Airbnb, Booking.com, and Google.');
+}
+
+// ═══════════════════════════════════════════════════════════
+// MODALS
+// ═══════════════════════════════════════════════════════════
+
+function openModal(type) {
+  const modal = document.getElementById('modal');
+  const title = document.getElementById('modal-title');
+  const body = document.getElementById('modal-body');
+  
+  let html = "";
+  
+  if(type==="add-booking") {
+    title.textContent = "New Reservation";
+    html = `<div class="form-grid">
+      <div class="form-field"><label class="form-label">Guest Name *</label><input class="form-input" id="f-guest"/></div>
+      <div class="form-field"><label class="form-label">Phone</label><input class="form-input" id="f-phone"/></div>
+      <div class="form-field"><label class="form-label">Email</label><input class="form-input" id="f-email"/></div>
+      <div class="form-field"><label class="form-label">Room *</label><select class="form-select" id="f-room">
+        ${DATA.rooms.map(r=>`<option>${r.number}</option>`).join("")}</select></div>
+      <div class="form-field"><label class="form-label">Check-in *</label><input type="date" class="form-input" id="f-checkin"/></div>
+      <div class="form-field"><label class="form-label">Check-out *</label><input type="date" class="form-input" id="f-checkout"/></div>
+      <div class="form-field"><label class="form-label">Total Amount *</label><input type="number" class="form-input" id="f-total"/></div>
+      <div class="form-field"><label class="form-label">Source</label><select class="form-select" id="f-source">
+        <option>Airbnb</option><option>Booking.com</option><option>Direct</option><option>MakeMyTrip</option></select></div>
+      <div class="form-field"><label class="form-label">No. of Guests</label><input type="number" class="form-input" id="f-numguests" value="1"/></div>
+      <div class="form-field"><label class="form-label">Registered By</label><select class="form-select" id="f-employee">
+        ${EMPLOYEES.map(e=>`<option>${e}</option>`).join("")}</select></div>
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-top:16px" onclick="saveBooking()">Save Reservation</button>`;
+  }
+  
+  else if(type==="add-task") {
+    title.textContent = "New Task";
+    html = `<div class="form-grid">
+      <div class="form-field full"><label class="form-label">Task Title *</label><input class="form-input" id="f-tasktitle"/></div>
+      <div class="form-field"><label class="form-label">Assigned To</label><select class="form-select" id="f-assignedto">
+        ${EMPLOYEES.map(e=>`<option>${e}</option>`).join("")}</select></div>
+      <div class="form-field"><label class="form-label">Due Date</label><input type="date" class="form-input" id="f-duedate"/></div>
+      <div class="form-field"><label class="form-label">Priority</label><select class="form-select" id="f-priority">
+        <option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option></select></div>
+      <div class="form-field full"><label class="form-label">Description</label><textarea class="form-textarea" id="f-taskdesc"></textarea></div>
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-top:16px" onclick="saveTask()">Add Task</button>`;
+  }
+  
+  else if(type==="add-maintenance") {
+    title.textContent = "Log Maintenance Issue";
+    html = `<div class="form-grid">
+      <div class="form-field"><label class="form-label">Room</label><select class="form-select" id="f-mroom">
+        ${DATA.rooms.map(r=>`<option>${r.number}</option>`).join("")}</select></div>
+      <div class="form-field"><label class="form-label">Priority</label><select class="form-select" id="f-mpriority">
+        <option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option></select></div>
+      <div class="form-field full"><label class="form-label">Issue Description</label><textarea class="form-textarea" id="f-missue"></textarea></div>
+      <div class="form-field"><label class="form-label">Assigned To</label><select class="form-select" id="f-massigned">
+        ${EMPLOYEES.map(e=>`<option>${e}</option>`).join("")}</select></div>
+      <div class="form-field"><label class="form-label">Estimated Cost</label><input type="number" class="form-input" id="f-mcost"/></div>
+    </div>
+    <button class="btn btn-danger" style="width:100%;margin-top:16px" onclick="saveMaintenance()">Log Issue</button>`;
+  }
+  
+  else if(type==="add-inventory") {
+    title.textContent = "Add Inventory Item";
+    html = `<div class="form-grid">
+      <div class="form-field"><label class="form-label">Item Name *</label><input class="form-input" id="f-iname"/></div>
+      <div class="form-field"><label class="form-label">Category</label><input class="form-input" id="f-icat"/></div>
+      <div class="form-field"><label class="form-label">Quantity</label><input type="number" class="form-input" id="f-iqty"/></div>
+      <div class="form-field"><label class="form-label">Unit</label><input class="form-input" id="f-iunit" placeholder="pcs, kg, liters"/></div>
+      <div class="form-field"><label class="form-label">Min Quantity Alert</label><input type="number" class="form-input" id="f-imin"/></div>
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-top:16px" onclick="saveInventory()">Add Item</button>`;
+  }
+  
+  else if(type==="add-vendor") {
+    title.textContent = "Add Vendor";
+    html = `<div class="form-grid">
+      <div class="form-field"><label class="form-label">Vendor Name *</label><input class="form-input" id="f-vname"/></div>
+      <div class="form-field"><label class="form-label">Category</label><input class="form-input" id="f-vcat"/></div>
+      <div class="form-field"><label class="form-label">Contact</label><input class="form-input" id="f-vcontact"/></div>
+      <div class="form-field"><label class="form-label">Email</label><input type="email" class="form-input" id="f-vemail"/></div>
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-top:16px" onclick="saveVendor()">Add Vendor</button>`;
+  }
+  
+  else if(type==="add-advance") {
+    title.textContent = "Record Advance Payment";
+    html = `<div class="form-grid">
+      <div class="form-field full"><label class="form-label">Booking Voucher *</label><select class="form-select" id="f-advbooking">
+        ${DATA.bookings.map(b=>`<option value="${b.id}">${b.voucher} - ${b.guest}</option>`).join("")}</select></div>
+      <div class="form-field"><label class="form-label">Amount *</label><input type="number" class="form-input" id="f-advamt"/></div>
+      <div class="form-field"><label class="form-label">Account</label><select class="form-select" id="f-advacc">
+        ${ACCOUNTS.map(a=>`<option>${a}</option>`).join("")}</select></div>
+      <div class="form-field"><label class="form-label">Collected By</label><select class="form-select" id="f-advemp">
+        ${EMPLOYEES.map(e=>`<option>${e}</option>`).join("")}</select></div>
+      <div class="form-field"><label class="form-label">Mode</label><select class="form-select" id="f-advmode">
+        <option>UPI</option><option>Cash</option><option>Bank Transfer</option><option>Card</option></select></div>
+    </div>
+    <button class="btn btn-success" style="width:100%;margin-top:16px" onclick="saveAdvance()">Record Advance</button>`;
+  }
+  
+  else if(type==="add-expense") {
+    title.textContent = "Log Expense";
+    html = `<div class="form-grid">
+      <div class="form-field"><label class="form-label">Category *</label><select class="form-select" id="f-ecat">
+        <option>Cleaning</option><option>Maintenance</option><option>Utilities</option><option>Supplies</option><option>Marketing</option><option>Salary</option><option>Other</option></select></div>
+      <div class="form-field"><label class="form-label">Amount *</label><input type="number" class="form-input" id="f-eamt"/></div>
+      <div class="form-field full"><label class="form-label">Description</label><input class="form-input" id="f-edesc"/></div>
+      <div class="form-field"><label class="form-label">Property</label><select class="form-select" id="f-eprop">
+        ${PROPERTIES.map(p=>`<option>${p}</option>`).join("")}</select></div>
+      <div class="form-field"><label class="form-label">Account</label><select class="form-select" id="f-eacc">
+        ${ACCOUNTS.map(a=>`<option>${a}</option>`).join("")}</select></div>
+      <div class="form-field"><label class="form-label">Spent By</label><select class="form-select" id="f-eemp">
+        ${EMPLOYEES.map(e=>`<option>${e}</option>`).join("")}</select></div>
+    </div>
+    <button class="btn btn-danger" style="width:100%;margin-top:16px" onclick="saveExpense()">Log Expense</button>`;
+  }
+  
+  else if(type==="add-room") {
+    title.textContent = "Add Room";
+    html = `<div class="form-grid">
+      <div class="form-field"><label class="form-label">Room Number *</label><input class="form-input" id="f-roomnum"/></div>
+      <div class="form-field"><label class="form-label">Room Type</label><select class="form-select" id="f-roomtype">
+        ${ROOM_TYPES.map(t=>`<option>${t}</option>`).join("")}</select></div>
+      <div class="form-field"><label class="form-label">Property</label><select class="form-select" id="f-roomprop">
+        ${PROPERTIES.map(p=>`<option>${p}</option>`).join("")}</select></div>
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-top:16px" onclick="saveRoom()">Add Room</button>`;
+  }
+  
+  else if(type==="mark-attendance") {
+    title.textContent = "Mark Today's Attendance";
+    const dateStr = today();
+    const d = new Date(dateStr);
+    const month = d.getMonth(); const year = d.getFullYear(); const day = d.getDate();
+    html = `<p style="font-size:13px;color:#6B7280;margin-bottom:16px">Marking attendance for <b>${d.toLocaleDateString("en-IN",{day:"numeric",month:"long",year:"numeric"})}</b></p>`;
+    html += `<div style="max-height:400px;overflow-y:auto">`;
+    EMPLOYEES.forEach(emp => {
+      const key = `${emp}_${year}-${String(month+1).padStart(2,"0")}`;
+      const cur = (DATA.attendance[key]||{})[day] || "P";
+      html += `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #F3F4F6">
+        <span style="font-size:13px;font-weight:600">${emp}</span>
+        <select id="ba-${emp.replace(/ /g,'_')}" style="padding:6px 10px;border-radius:8px;border:1px solid #E0E0E0;font-size:12px">
+          ${["P","A","H","L","WO"].map(v=>`<option value="${v}" ${cur===v?"selected":""}>${{P:"Present",A:"Absent",H:"Half Day",L:"Leave",WO:"Week Off"}[v]}</option>`).join("")}
+        </select>
+      </div>`;
+    });
+    html += `</div>`;
+    html += `<button class="btn btn-warning" style="width:100%;margin-top:16px" onclick="saveBulkAttendance(${year},${month},${day})">Save Attendance</button>`;
+  }
+  
+  else if(type==="set-salary") {
+    title.textContent = "Set Base Salaries";
+    html = `<p style="font-size:13px;color:#6B7280;margin-bottom:16px">Set monthly base salary and overtime rate per present day for each employee.</p>`;
+    html += `<div style="max-height:400px;overflow-y:auto">`;
+    EMPLOYEES.forEach(emp => {
+      html += `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;align-items:center">
+        <span style="font-size:13px;font-weight:600">${emp}</span>
+        <div class="form-field" style="margin:0"><label class="form-label" style="font-size:10px">Base (₹/mo)</label>
+          <input id="sb-${emp.replace(/ /g,'_')}" type="number" class="form-input" placeholder="15000" value="${(DATA.salaries[emp]||{}).base||""}"/></div>
+        <div class="form-field" style="margin:0"><label class="form-label" style="font-size:10px">OT (₹/day)</label>
+          <input id="so-${emp.replace(/ /g,'_')}" type="number" class="form-input" placeholder="200" value="${(DATA.salaries[emp]||{}).overtime||""}"/></div>
+      </div>`;
+    });
+    html += `</div>`;
+    html += `<button class="btn btn-primary" style="width:100%;margin-top:16px" onclick="saveSalaries()">Save Salaries</button>`;
+  }
+  
+  body.innerHTML = html;
+  modal.style.display = "flex";
+}
+
+function closeModal() {
+  document.getElementById('modal').style.display = "none";
+}
+
+// Save functions
+function saveBooking() {
+  const guest = document.getElementById('f-guest').value;
+  const room = document.getElementById('f-room').value;
+  const checkin = document.getElementById('f-checkin').value;
+  const checkout = document.getElementById('f-checkout').value;
+  const total = Number(document.getElementById('f-total').value);
+  
+  if(!guest||!room||!checkin||!checkout||!total) { alert('Please fill required fields'); return; }
+  
+  const nights = Math.max(0, Math.round((new Date(checkout)-new Date(checkin))/86400000));
+  const booking = {
+    id:nextId('BK'),
+    voucher:`VOC-${nextId('V')}`,
+    guest,
+    phone:document.getElementById('f-phone').value,
+    email:document.getElementById('f-email').value,
+    room,
+    checkin,
+    checkout,
+    nights,
+    total,
+    source:document.getElementById('f-source').value,
+    numGuests:Number(document.getElementById('f-numguests').value)||1,
+    employee:document.getElementById('f-employee').value,
+    status:"Confirmed",
+    date:today()
+  };
+  
+  DATA.bookings.push(booking);
+  saveData();
+  closeModal();
+  renderReservations();
+  alert('Booking created successfully!');
+}
+
+function saveTask() {
+  const title = document.getElementById('f-tasktitle').value;
+  if(!title) { alert('Task title required'); return; }
+  DATA.tasks.push({
+    id:nextId('TSK'),
+    title,
+    assignedTo:document.getElementById('f-assignedto').value,
+    dueDate:document.getElementById('f-duedate').value,
+    priority:document.getElementById('f-priority').value,
+    desc:document.getElementById('f-taskdesc').value,
+    done:false
+  });
+  saveData();
+  closeModal();
+  renderTasks();
+}
+
+function saveMaintenance() {
+  DATA.maintenance.push({
+    id:nextId('MNT'),
+    date:today(),
+    room:document.getElementById('f-mroom').value,
+    issue:document.getElementById('f-missue').value,
+    priority:document.getElementById('f-mpriority').value,
+    assignedTo:document.getElementById('f-massigned').value,
+    cost:Number(document.getElementById('f-mcost').value)||0,
+    status:'pending'
+  });
+  saveData();
+  closeModal();
+  renderMaintenance();
+}
+
+function saveInventory() {
+  const name = document.getElementById('f-iname').value;
+  if(!name) { alert('Item name required'); return; }
+  DATA.inventory.push({
+    id:nextId('INV'),
+    name,
+    category:document.getElementById('f-icat').value,
+    quantity:Number(document.getElementById('f-iqty').value)||0,
+    unit:document.getElementById('f-iunit').value,
+    minQty:Number(document.getElementById('f-imin').value)||0
+  });
+  saveData();
+  closeModal();
+  renderInventory();
+}
+
+function saveVendor() {
+  const name = document.getElementById('f-vname').value;
+  if(!name) { alert('Vendor name required'); return; }
+  DATA.vendors.push({
+    id:nextId('VEN'),
+    name,
+    category:document.getElementById('f-vcat').value,
+    contact:document.getElementById('f-vcontact').value,
+    email:document.getElementById('f-vemail').value,
+    totalSpent:0
+  });
+  saveData();
+  closeModal();
+  renderVendors();
+}
+
+function saveAdvance() {
+  const bookingId = document.getElementById('f-advbooking').value;
+  const amount = Number(document.getElementById('f-advamt').value);
+  if(!bookingId||!amount) { alert('Please fill required fields'); return; }
+  
+  const booking = DATA.bookings.find(b=>b.id===bookingId);
+  DATA.advances.push({
+    id:nextId('ADV'),
+    bookingId,
+    guest:booking?.guest||"",
+    date:today(),
+    amount,
+    account:document.getElementById('f-advacc').value,
+    employee:document.getElementById('f-advemp').value,
+    mode:document.getElementById('f-advmode').value
+  });
+  saveData();
+  closeModal();
+  renderAdvances();
+}
+
+function saveExpense() {
+  const category = document.getElementById('f-ecat').value;
+  const amount = Number(document.getElementById('f-eamt').value);
+  if(!category||!amount) { alert('Please fill required fields'); return; }
+  
+  DATA.expenses.push({
+    id:nextId('EXP'),
+    date:today(),
+    category,
+    amount,
+    desc:document.getElementById('f-edesc').value,
+    property:document.getElementById('f-eprop').value,
+    account:document.getElementById('f-eacc').value,
+    employee:document.getElementById('f-eemp').value
+  });
+  saveData();
+  closeModal();
+  renderExpenses();
+}
+
+function saveRoom() {
+  const number = document.getElementById('f-roomnum').value;
+  if(!number) { alert('Room number required'); return; }
+  DATA.rooms.push({
+    id:nextId('RM'),
+    number,
+    type:document.getElementById('f-roomtype').value,
+    property:document.getElementById('f-roomprop').value,
+    status:'vacant'
+  });
+  saveData();
+  closeModal();
+  renderRooms();
+}
+
+function saveBulkAttendance(year, month, day) {
+  const mkey = String(month+1).padStart(2,"0");
+  EMPLOYEES.forEach(emp => {
+    const key = `${emp}_${year}-${mkey}`;
+    if(!DATA.attendance[key]) DATA.attendance[key] = {};
+    const val = document.getElementById(`ba-${emp.replace(/ /g,'_')}`)?.value;
+    if(val) DATA.attendance[key][day] = val;
+  });
+  saveData();
+  closeModal();
+  renderAttendance();
+  alert('Attendance saved for today!');
+}
+
+function saveSalaries() {
+  EMPLOYEES.forEach(emp => {
+    const base = Number(document.getElementById(`sb-${emp.replace(/ /g,'_')}`)?.value) || 0;
+    const ot = Number(document.getElementById(`so-${emp.replace(/ /g,'_')}`)?.value) || 0;
+    if(!DATA.salaries[emp]) DATA.salaries[emp] = {paid:{}};
+    DATA.salaries[emp].base = base;
+    DATA.salaries[emp].overtime = ot;
+  });
+  saveData();
+  closeModal();
+  renderSalary();
+  alert('Salaries updated!');
+}
+
+// ═══════════════════════════════════════════════════════════
+// BACKUP & EXPORT
+// ═══════════════════════════════════════════════════════════
+
+function backupToGoogleDrive() {
+  alert('Google Drive backup feature: Coming soon!\n\nFor now, use "Export All Data" to download an Excel backup.');
+}
+
+function exportAllData() {
+  const wb = XLSX.utils.book_new();
+  
+  // Bookings
+  const bookingsData = DATA.bookings.map(b=>({
+    Voucher:b.voucher,Guest:b.guest,Phone:b.phone,Room:b.room,
+    CheckIn:b.checkin,CheckOut:b.checkout,Nights:b.nights,
+    Total:b.total,Source:b.source,Status:b.status,RegisteredBy:b.employee
+  }));
+  const ws1 = XLSX.utils.json_to_sheet(bookingsData);
+  XLSX.utils.book_append_sheet(wb, ws1, "Bookings");
+  
+  // Advances
+  const advData = DATA.advances.map(a=>({
+    ID:a.id,BookingID:a.bookingId,Guest:a.guest,Date:a.date,
+    Amount:a.amount,Account:a.account,CollectedBy:a.employee,Mode:a.mode
+  }));
+  const ws2 = XLSX.utils.json_to_sheet(advData);
+  XLSX.utils.book_append_sheet(wb, ws2, "Advances");
+  
+  // Expenses
+  const expData = DATA.expenses.map(e=>({
+    Date:e.date,Category:e.category,Description:e.desc,Amount:e.amount,
+    Property:e.property,Account:e.account,SpentBy:e.employee
+  }));
+  const ws3 = XLSX.utils.json_to_sheet(expData);
+  XLSX.utils.book_append_sheet(wb, ws3, "Expenses");
+  
+  XLSX.writeFile(wb, `PropertyManager_Backup_${today()}.xlsx`);
+}
+
+function exportTable(tableName) {
+  alert(`Exporting ${tableName} to Excel...`);
+  // Implementation: use XLSX to export specific table
+}
+
+function exportCalendar() {
+  alert('Calendar export feature coming soon!');
+}
+
+// ═══════════════════════════════════════════════════════════
+// CHANNEL MANAGER
+// ═══════════════════════════════════════════════════════════
+
+function syncIcal(source) {
+  const url = document.getElementById(`ical-${source}`).value;
+  if(!url) { alert('Please enter iCal URL'); return; }
+  
+  alert(`iCal sync for ${source}:\n\nThis feature will fetch bookings from the iCal feed and create reservations automatically.\n\nComing soon!`);
+}
+
+function importBookings(event) {
+  const file = event.target.files[0];
+  if(!file) return;
+  
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    // Parse CSV and import bookings
+    alert('CSV import feature coming soon!\n\nWill parse and import bookings from Airbnb/Booking.com CSV exports.');
+  };
+  reader.readAsText(file);
+}
+
+// ═══════════════════════════════════════════════════════════
+// REPORTS
+// ═══════════════════════════════════════════════════════════
+
+function generateReport(type) {
+  alert(`Generating ${type} report...\n\nThis will create a detailed ${type} report with charts and export options.\n\nComing soon!`);
+}
+
+// ═══════════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════════
+
+function refreshData() {
+  loadData();
+  renderDashboard();
+  alert('Data refreshed!');
+}
+
+function viewBooking(id) {
+  const b = DATA.bookings.find(x=>x.id===id);
+  if(!b) return;
+  alert(`Booking Details:\n\nVoucher: ${b.voucher}\nGuest: ${b.guest}\nRoom: ${b.room}\nCheck-in: ${b.checkin}\nCheck-out: ${b.checkout}\nTotal: ${fmt(b.total)}\nStatus: ${b.status}`);
+}
+
+function markBalanceCollected(bookingId) {
+  const employee = prompt('Collected by (employee name):');
+  if(!employee) return;
+  DATA.balanceCollections[bookingId] = {employee, date:today()};
+  saveData();
+  renderBalances();
+  alert('Balance marked as collected!');
+}
+
+function saveSettings() {
+  const newName = document.getElementById('set-name').value;
+  const newEmail = document.getElementById('set-email').value;
+  const newPhone = document.getElementById('set-phone').value;
+  
+  if(!newName) {
+    alert('❌ Business name is required!');
+    return;
+  }
+  
+  DATA.settings.name = newName;
+  DATA.settings.email = newEmail;
+  DATA.settings.phone = newPhone;
+  saveData();
+  
+  // Update dashboard name immediately
+  document.getElementById('dashboard-name').textContent = '🏠 ' + newName;
+  
+  alert('✅ Settings saved!\n\nYour dashboard name is now: ' + newName);
+}
+
+function loadSettingsForm() {
+  // Load current settings into form
+  document.getElementById('set-name').value = DATA.settings.name || 'My Property Group';
+  document.getElementById('set-email').value = DATA.settings.email || 'contact@property.com';
+  document.getElementById('set-phone').value = DATA.settings.phone || '+91 98765 43210';
+}
+
+function updateDashboardBranding() {
+  // Update dashboard name on page load
+  const businessName = DATA.settings.name || 'Property Manager Pro';
+  document.getElementById('dashboard-name').textContent = '🏠 ' + businessName;
+}
+
+function clearAllData() {
+  const confirmation = prompt('⚠️ DELETE ALL DATA?\n\nThis will permanently delete:\n- All bookings\n- All advances\n- All expenses\n- All rooms\n- All tasks\n- Everything!\n\nType "DELETE" to confirm:');
+  
+  if(confirmation !== 'DELETE') {
+    alert('❌ Deletion cancelled. Data is safe.');
+    return;
+  }
+  
+  // Clear localStorage
+  localStorage.removeItem('pmData');
+  
+  // Reset DATA object
+  DATA = {
+    rooms: [],
+    bookings: [],
+    advances: [],
+    expenses: [],
+    tasks: [],
+    maintenance: [],
+    inventory: [],
+    vendors: [],
+    guests: [],
+    reviews: [],
+    attendance: {},
+    salaries: {},
+    balanceCollections: {},
+    housekeeping: {},
+    rates: {},
+    settings: {name:"My Property Group",email:"contact@property.com",phone:"+91 98765 43210"}
+  };
+  
+  // Save empty state
+  saveData();
+  
+  // Show success and reload
+  alert('✅ All data deleted successfully!\n\nPage will reload with empty system.');
+  
+  setTimeout(() => {
+    location.reload();
+  }, 500);
+}
+
+function clearSampleDataOnly() {
+  if(!confirm('Clear sample data and start fresh?\n\nYou can add your own data after this.')) return;
+  
+  // Keep settings but clear all data
+  DATA = {
+    rooms: [],
+    bookings: [],
+    advances: [],
+    expenses: [],
+    tasks: [],
+    maintenance: [],
+    inventory: [],
+    vendors: [],
+    guests: [],
+    reviews: [],
+    attendance: {},
+    salaries: {},
+    balanceCollections: {},
+    housekeeping: {},
+    rates: {},
+    settings: DATA.settings // Keep existing settings
+  };
+  
+  saveData();
+  alert('✅ Sample data cleared!\n\nReloading...');
+  location.reload();
+}
+
+function importData() {
+  alert('Data import feature coming soon!\n\nYou will be able to import Excel/CSV files to restore backups.');
+}
+
+// ═══════════════════════════════════════════════════════════
+// PWA INSTALL
+// ═══════════════════════════════════════════════════════════
+
+let deferredPrompt;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('install-prompt').style.display = 'block';
+});
+
+function installApp() {
+  if(!deferredPrompt) {
+    alert('App is already installed or install not supported on this device.');
+    return;
+  }
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then((choiceResult) => {
+    if(choiceResult.outcome === 'accepted') {
+      document.getElementById('install-prompt').style.display = 'none';
+    }
+    deferredPrompt = null;
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════
+
+// Initialize dates
+document.getElementById('arrival-date').value = today();
+
+// Populate month/year selects
+const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+const now = new Date();
+['att-month','sal-month'].forEach(id => {
+  const sel = document.getElementById(id);
+  if(sel) months.forEach((m,i) => {
+    const o = document.createElement("option");
+    o.value=i; o.textContent=m;
+    if(i===now.getMonth()) o.selected=true;
+    sel.appendChild(o);
+  });
+});
+['att-year','sal-year'].forEach(id => {
+  const sel = document.getElementById(id);
+  if(sel) for(let y=now.getFullYear()-1; y<=now.getFullYear()+1; y++){
+    const o = document.createElement("option");
+    o.value=y; o.textContent=y;
+    if(y===now.getFullYear()) o.selected=true;
+    sel.appendChild(o);
+  }
+});
+
+// Load data and render
+loadData();
+updateDashboardBranding();
+renderDashboard();
+
+// Register service worker for PWA
+if('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('data:text/javascript,self.addEventListener("install",()=>self.skipWaiting());self.addEventListener("activate",()=>self.clients.claim());').catch(()=>{});
+}
+</script>
+</body>
+</html>
